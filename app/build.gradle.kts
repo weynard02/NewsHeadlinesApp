@@ -17,7 +17,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "BASE_URL", "\"https://newsapi.org/v2\"")
-        buildConfigField("String", "API_KEY", "\"\"")
+        buildConfigField("String", "API_KEY", "\"92b824201da64c2f9183a42956eb0a46\"")
     }
 
     buildTypes {
@@ -63,4 +63,5 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
+    implementation(libs.coil.compose)
 }
