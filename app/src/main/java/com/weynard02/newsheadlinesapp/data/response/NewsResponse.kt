@@ -11,11 +11,11 @@ data class NewsResponse(
 data class ArticlesItem(
 
 	@field:SerializedName("urlToImage")
-	val urlToImage: String,
+	val urlToImage: String?,
 
 	@field:SerializedName("description")
-	val description: String,
+	val description: String?,
 
 	@field:SerializedName("title")
-	val title: String
+	val title: String?
 )

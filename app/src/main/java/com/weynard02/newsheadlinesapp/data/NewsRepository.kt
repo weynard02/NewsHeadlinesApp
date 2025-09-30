@@ -2,20 +2,17 @@ package com.weynard02.newsheadlinesapp.data
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
+import com.weynard02.newsheadlinesapp.BuildConfig
+import com.weynard02.newsheadlinesapp.data.response.ArticlesItem
 import com.weynard02.newsheadlinesapp.data.response.NewsResponse
 import com.weynard02.newsheadlinesapp.ui.common.UiState
 
 class NewsRepository private constructor(
     private val apiService: ApiService
 ){
-    fun getTopHeadlines(): LiveData<UiState<NewsResponse>> = liveData {
-        emit(UiState.Loading)
-        try {
-            val response = apiService.getTopHeadlines()
-            emit(UiState.Success(response))
-        } catch (e: Exception) {
-            emit(UiState.Error(e.message.toString()))
-        }
+    suspend fun getTopHeadlines(): List<ArticlesItem> {
+        val response = apiService.getTopHeadlines(BuildConfig.API_KEY).articles
+        return response
     }
 
     companion object {
