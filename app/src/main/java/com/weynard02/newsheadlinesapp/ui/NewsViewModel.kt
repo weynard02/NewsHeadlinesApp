@@ -7,13 +7,15 @@ import com.weynard02.newsheadlinesapp.data.response.ArticlesItem
 import com.weynard02.newsheadlinesapp.data.response.NewsResponse
 import com.weynard02.newsheadlinesapp.ui.common.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class NewsViewModel(private val newsRepository: NewsRepository) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<UiState<List<ArticlesItem>>>(UiState.Loading)
-    val uiState = _uiState.asStateFlow()
+    private val _uiState: MutableStateFlow<UiState<List<ArticlesItem>>>  = MutableStateFlow(UiState.Loading)
+    val uiState: StateFlow<UiState<List<ArticlesItem>>>
+        get() = _uiState
 
     init {
         getTopHeadlines()

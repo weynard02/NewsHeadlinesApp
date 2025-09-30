@@ -1,73 +1,65 @@
 package com.weynard02.newsheadlinesapp.ui
 
-import android.R.attr.description
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
+import android.R.attr.type
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.weynard02.newsheadlinesapp.ViewModelFactory
-import com.weynard02.newsheadlinesapp.data.Injection
 import com.weynard02.newsheadlinesapp.ui.theme.NewsHeadlinesAppTheme
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.weynard02.newsheadlinesapp.data.response.ArticlesItem
-import com.weynard02.newsheadlinesapp.ui.common.UiState
-import com.weynard02.newsheadlinesapp.ui.component.NewsListItem
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.weynard02.newsheadlinesapp.navigation.Screen
+import com.weynard02.newsheadlinesapp.ui.screen.DetailScreen
+import com.weynard02.newsheadlinesapp.ui.screen.HomeScreen
 
 
 @Composable
 fun NewsHeadlinesApp(
-    viewModel: NewsViewModel = viewModel(
-        factory = ViewModelFactory(Injection.provideRepository(LocalContext.current))
-    ),
     modifier: Modifier = Modifier,
+    navController: NavHostController = rememberNavController()
 )  {
-    Box(modifier = modifier) {
-        val listState = rememberLazyListState()
-        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    Scaffold(
+        modifier = modifier
+    ) { innerPadding ->
 
-        when(uiState) {
-            is UiState.Loading -> {
-                CircularProgressIndicator(Modifier.align(Alignment.Center))
-            }
-            is UiState.Error -> {
-                Column(
-                    modifier = Modifier.align(Alignment.Center).padding(8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Text("Error loading news", fontWeight = FontWeight.Medium)
-                }
-            }
-            is UiState.Success<List<ArticlesItem>> -> {
-                LazyColumn(
-                    state = listState
-                ) {
-                    items((uiState as UiState.Success<List<ArticlesItem>>).data) {
-                        NewsListItem(
-                            title = it.title.toString(),
-                            description = it.description.toString(),
-                            urlToImage = it.urlToImage.toString()
-                        )
+        NavHost(
+            navController = navController,
+            startDestination = Screen.Home.route,
+            modifier = Modifier.padding(innerPadding)
+        ) {
+            composable(Screen.Home.route) {
+                HomeScreen(
+                    navigateToDetail = { title, description, urlToImage ->
+                        navController.navigate(Screen.Detail.createRoute(title, description, urlToImage))
+
                     }
-                }
+                )
             }
 
+            composable(Screen.Detail.route, arguments = listOf(
+                navArgument("title") { type = NavType.StringType },
+                navArgument("description") { type = NavType.StringType },
+                navArgument("urlToImage") { type = NavType.StringType },
+            ))
+            {
+                val title = it.arguments?.getString("title").orEmpty()
+                val description = it.arguments?.getString("description").orEmpty()
+                val urlToImage = it.arguments?.getString("urlToImage")
+                    ?.ifBlank { null }
+
+                DetailScreen(
+                    title = title,
+                    description = description,
+                    urlToImage = urlToImage,
+                    onBack = { navController.popBackStack() }
+                )
+            }
         }
-
-
     }
 }
 
