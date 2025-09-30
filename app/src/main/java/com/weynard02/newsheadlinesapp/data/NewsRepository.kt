@@ -6,13 +6,15 @@ import com.weynard02.newsheadlinesapp.BuildConfig
 import com.weynard02.newsheadlinesapp.data.response.ArticlesItem
 import com.weynard02.newsheadlinesapp.data.response.NewsResponse
 import com.weynard02.newsheadlinesapp.ui.common.UiState
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 class NewsRepository private constructor(
     private val apiService: ApiService
 ){
-    suspend fun getTopHeadlines(): List<ArticlesItem> {
+    suspend fun getTopHeadlines(): Flow<List<ArticlesItem>> {
         val response = apiService.getTopHeadlines(BuildConfig.API_KEY).articles
-        return response
+        return flowOf(response)
     }
 
     companion object {

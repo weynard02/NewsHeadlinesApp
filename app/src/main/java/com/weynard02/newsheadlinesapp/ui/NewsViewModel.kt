@@ -9,6 +9,7 @@ import com.weynard02.newsheadlinesapp.ui.common.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 class NewsViewModel(private val newsRepository: NewsRepository) : ViewModel() {
@@ -23,14 +24,13 @@ class NewsViewModel(private val newsRepository: NewsRepository) : ViewModel() {
 
     fun getTopHeadlines() {
         viewModelScope.launch {
-            _uiState.value = UiState.Loading
-            try {
-                val data = newsRepository.getTopHeadlines()
-                _uiState.value = UiState.Success(data)
-            }
-            catch (e: Exception)   {
-                _uiState.value = UiState.Error(e.message.toString())
-            }
+            newsRepository.getTopHeadlines()
+                .catch {
+                    _uiState.value = UiState.Error(it.message.toString())
+                }
+                .collect { articles ->
+                    _uiState.value = UiState.Success(articles)
+                }
         }
     }
 }
