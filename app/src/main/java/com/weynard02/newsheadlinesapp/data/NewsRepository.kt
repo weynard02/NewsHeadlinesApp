@@ -1,11 +1,7 @@
 package com.weynard02.newsheadlinesapp.data
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.liveData
 import com.weynard02.newsheadlinesapp.BuildConfig
 import com.weynard02.newsheadlinesapp.data.response.ArticlesItem
-import com.weynard02.newsheadlinesapp.data.response.NewsResponse
-import com.weynard02.newsheadlinesapp.ui.common.UiState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 

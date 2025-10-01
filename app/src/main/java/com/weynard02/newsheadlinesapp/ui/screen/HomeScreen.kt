@@ -51,20 +51,27 @@ fun HomeScreen(
                 }
             }
             is UiState.Success<List<ArticlesItem>> -> {
-                LazyColumn(
-                    state = listState
-                ) {
-                    items((uiState as UiState.Success<List<ArticlesItem>>).data) {
-                        NewsListItem(
-                            title = it.title.toString(),
-                            description = it.description.toString(),
-                            urlToImage = it.urlToImage.toString(),
-                            modifier = Modifier.clickable {
-                                navigateToDetail(it.title.toString(), it.description.toString(), it.urlToImage.toString())
-                            }
-                        )
+                val articles = (uiState as UiState.Success<List<ArticlesItem>>).data
+
+                if (articles.isEmpty()) {
+                    Text(text = "No news available", fontWeight = FontWeight.Medium)
+                } else {
+                    LazyColumn(
+                        state = listState
+                    ) {
+                        items(articles) {
+                            NewsListItem(
+                                title = it.title.toString(),
+                                description = it.description.toString(),
+                                urlToImage = it.urlToImage.toString(),
+                                modifier = Modifier.clickable {
+                                    navigateToDetail(it.title.toString(), it.description.toString(), it.urlToImage.toString())
+                                }
+                            )
+                        }
                     }
                 }
+
             }
 
         }
