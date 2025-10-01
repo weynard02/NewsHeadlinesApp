@@ -1,8 +1,10 @@
 package com.weynard02.newsheadlinesapp.ui.screen
 
+import android.graphics.Color.red
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -20,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -57,15 +60,27 @@ fun HomeScreen(
 
             when (uiState) {
                 is UiState.Loading -> {
-                    CircularProgressIndicator(Modifier.align(Alignment.Center))
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 }
 
                 is UiState.Error -> {
-                    Column(
-                        modifier = Modifier.align(Alignment.Center).padding(8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(8.dp),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Text("Error loading news", fontWeight = FontWeight.Medium)
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text("Error loading news", fontWeight = FontWeight.Medium, color = Color(255, 0, 0))
+                        }
                     }
                 }
 
@@ -73,7 +88,12 @@ fun HomeScreen(
                     val articles = (uiState as UiState.Success<List<ArticlesItem>>).data
 
                     if (articles.isEmpty()) {
-                        Text(text = "No news available", fontWeight = FontWeight.Medium)
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("No news available", fontWeight = FontWeight.Medium)
+                        }
                     } else {
                         LazyColumn(
                             state = listState
