@@ -1,6 +1,5 @@
 package com.weynard02.newsheadlinesapp.ui.screen
 
-import android.R.attr.data
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,8 +7,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -26,6 +32,7 @@ import com.weynard02.newsheadlinesapp.ui.NewsViewModel
 import com.weynard02.newsheadlinesapp.ui.common.UiState
 import com.weynard02.newsheadlinesapp.ui.component.NewsListItem
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     viewModel: NewsViewModel = viewModel(
@@ -34,49 +41,66 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     navigateToDetail: (String, String, String) -> Unit,
 )  {
-    Box(modifier = modifier) {
-        val listState = rememberLazyListState()
-        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    Scaffold (
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text("Top News Headlines")
+                },
 
-        when(uiState) {
-            is UiState.Loading -> {
-                CircularProgressIndicator(Modifier.align(Alignment.Center))
-            }
-            is UiState.Error -> {
-                Column(
-                    modifier = Modifier.align(Alignment.Center).padding(8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Text("Error loading news", fontWeight = FontWeight.Medium)
+            )
+        }
+    ) { innerPadding ->
+        Box(modifier = modifier.padding(innerPadding)) {
+            val listState = rememberLazyListState()
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+            when (uiState) {
+                is UiState.Loading -> {
+                    CircularProgressIndicator(Modifier.align(Alignment.Center))
                 }
-            }
-            is UiState.Success<List<ArticlesItem>> -> {
-                val articles = (uiState as UiState.Success<List<ArticlesItem>>).data
 
-                if (articles.isEmpty()) {
-                    Text(text = "No news available", fontWeight = FontWeight.Medium)
-                } else {
-                    LazyColumn(
-                        state = listState
+                is UiState.Error -> {
+                    Column(
+                        modifier = Modifier.align(Alignment.Center).padding(8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        items(articles) {
-                            NewsListItem(
-                                title = it.title.toString(),
-                                description = it.description.toString(),
-                                urlToImage = it.urlToImage.toString(),
-                                modifier = Modifier.clickable {
-                                    navigateToDetail(it.title.toString(), it.description.toString(), it.urlToImage.toString())
-                                }
-                            )
-                        }
+                        Text("Error loading news", fontWeight = FontWeight.Medium)
                     }
                 }
 
+                is UiState.Success<List<ArticlesItem>> -> {
+                    val articles = (uiState as UiState.Success<List<ArticlesItem>>).data
+
+                    if (articles.isEmpty()) {
+                        Text(text = "No news available", fontWeight = FontWeight.Medium)
+                    } else {
+                        LazyColumn(
+                            state = listState
+                        ) {
+                            items(articles) {
+                                NewsListItem(
+                                    title = it.title.toString(),
+                                    description = it.description.toString(),
+                                    urlToImage = it.urlToImage.toString(),
+                                    modifier = Modifier.clickable {
+                                        navigateToDetail(
+                                            it.title.toString(),
+                                            it.description.toString(),
+                                            it.urlToImage.toString()
+                                        )
+                                    }
+                                )
+                            }
+                        }
+                    }
+
+                }
+
             }
 
+
         }
-
-
     }
 }
 
