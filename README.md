@@ -30,9 +30,11 @@ interface ApiService {
 }
 ```
 Home Screen:
+
 ![img_1.png](img_1.png)
 
 Detail Screen:
+
 ![img_2.png](img_2.png)
 
 
